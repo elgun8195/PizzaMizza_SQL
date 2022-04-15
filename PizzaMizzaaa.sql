@@ -1,0 +1,63 @@
+CREATE DATABASE PizzaMizzaa
+USE PizzaMizzaa
+
+CREATE TABLE Sliders(
+Id INT PRIMARY KEY IDENTITY,
+[Path] NVARCHAR(150)
+)
+
+CREATE TABLE DeletedSliders(
+Id INT PRIMARY KEY IDENTITY,
+[Path] NVARCHAR(150)
+)
+
+CREATE TABLE MainCategory(
+Id INT PRIMARY KEY IDENTITY,
+PizzaId INT REFERENCES Pizzas(Id),
+KomboMenuId INT,
+SalatId INT,
+PastaId INT,
+SorbaId INT,
+QelyanaltiId INT,
+SousId INT,
+DesertId INT,
+IckiId INT
+)
+
+CREATE TABLE Sizes(
+Id INT PRIMARY KEY IDENTITY,
+Size NVARCHAR(150),
+Price DECIMAL(3,2)
+)
+
+
+CREATE TABLE Pizzas(
+Id INT PRIMARY KEY IDENTITY,
+[Name] NVARCHAR(150),
+[Image] NVARCHAR(150),
+IsVegeterian BIT DEFAULT 'False',
+IsHalal BIT DEFAULT 'False',
+IsBitter BIT DEFAULT 'False',
+Details NVARCHAR(500),
+SizeId INT REFERENCES Sizes(Id)
+)
+
+CREATE TRIGGER InsertDeletedDataFromSlidersToDeletedSliders
+ON Sliders
+AFTER DELETE
+AS
+BEGIN
+
+DECLARE @Path nvarchar(150)
+SELECT @Path=GroupList.Path  from deleted  GroupList
+INSERT INTO DeletedSliders VALUES(@Path)
+
+END
+
+DELETE FROM Sliders WHERE Id=3
+
+
+CREATE VIEW V_DELETEDSLIDERS
+AS
+SELECT*FROM DeletedSliders
+
